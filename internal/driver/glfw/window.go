@@ -142,7 +142,7 @@ func (w *window) doShow() {
 		run.cond.Wait()
 	}
 	run.Unlock()
-
+	//创建窗口
 	w.createLock.Do(w.create)
 	if w.view() == nil {
 		return
@@ -157,6 +157,11 @@ func (w *window) doShow() {
 		if w.centered {
 			w.doCenterOnScreen() // lastly center if that was requested
 		}
+
+		if w.custom {
+			w.doLocateOnScreen() // customize the form location
+		}
+
 		w.view().Show()
 
 		// save coordinates
@@ -174,6 +179,7 @@ func (w *window) doShow() {
 	if w.canvas.Content() != nil {
 		w.canvas.Content().Show()
 	}
+
 }
 
 func (w *window) Hide() {
@@ -301,6 +307,7 @@ func (w *window) processMoved(x, y int) {
 
 	w.canvas.detectedScale = w.detectScale()
 	go w.canvas.reloadScale()
+
 }
 
 func (w *window) processResized(width, height int) {
@@ -930,6 +937,10 @@ func (w *window) runOnMainWhenCreated(fn func()) {
 
 func (d *gLDriver) CreateWindow(title string) fyne.Window {
 	return d.createWindow(title, true)
+}
+
+func (d *gLDriver) CreateWindowWithForm(title string) fyne.Window {
+	return d.createWindow(title, false)
 }
 
 func (d *gLDriver) createWindow(title string, decorate bool) fyne.Window {

@@ -16,6 +16,11 @@ type App interface {
 	// the application will exit.
 	NewWindow(title string) Window
 
+	// NewWindowWithForm Create a new window for the application.
+	// The first window to open is considered the "master" and when closed
+	// the application will exit.
+	NewWindowWithForm(title string) Window
+
 	// Open a URL in the default browser application.
 	OpenURL(url *url.URL) error
 

@@ -73,6 +73,10 @@ func (d *mobileDriver) CreateWindow(title string) fyne.Window {
 	return ret
 }
 
+func (d *mobileDriver) CreateWindowWithForm(title string) fyne.Window {
+	return d.CreateWindow(title)
+}
+
 func (d *mobileDriver) AllWindows() []fyne.Window {
 	return d.windows
 }

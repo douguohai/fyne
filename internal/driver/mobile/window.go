@@ -8,6 +8,7 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
+	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 type window struct {
@@ -218,4 +219,13 @@ func (w *window) RescaleContext() {
 
 func (w *window) Context() interface{} {
 	return fyne.CurrentApp().Driver().(*mobileDriver).glctx
+}
+
+func (w *window) LocateOnScreen(setPosX, setPosY int) {
+	// no-op
+}
+
+func (w *window) ScreenInfo() glfw.VidMode {
+	// no-op
+	return glfw.VidMode{}
 }

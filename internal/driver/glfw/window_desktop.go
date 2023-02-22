@@ -6,6 +6,8 @@ package glfw
 import (
 	"bytes"
 	"context"
+	"fmt"
+	"github.com/go-gl/glfw/v3.3/glfw"
 	"image"
 	_ "image/png" // for the icon
 	"runtime"
@@ -18,8 +20,6 @@ import (
 	"fyne.io/fyne/v2/internal/driver/common"
 	"fyne.io/fyne/v2/internal/painter"
 	"fyne.io/fyne/v2/internal/painter/gl"
-
-	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 const defaultTitle = "Fyne Application"
@@ -81,10 +81,11 @@ type window struct {
 	fullScreen bool
 	centered   bool
 	visible    bool
+	custom     bool
 
 	mouseLock            sync.RWMutex
 	mousePos             fyne.Position
-	mouseDragged         fyne.Draggable
+	mouseDragged         fyne.Draggable //鼠标拖动
 	mouseDraggedObjStart fyne.Position
 	mouseDraggedOffset   fyne.Position
 	mouseDragPos         fyne.Position
@@ -109,6 +110,12 @@ type window struct {
 	shouldExpand                    bool
 
 	pending []func()
+
+	setPosX, setPosY int // Preset window position
+}
+
+func (w *window) DragEnd() {
+	fmt.Print("DragEnd")
 }
 
 func (w *window) SetFullScreen(full bool) {
@@ -132,6 +139,7 @@ func (w *window) SetFullScreen(full bool) {
 	})
 }
 
+// CenterOnScreen 新增中心坐标
 func (w *window) CenterOnScreen() {
 	w.centered = true
 
@@ -162,6 +170,56 @@ func (w *window) doCenterOnScreen() {
 
 	// set new window coordinates
 	w.viewport.SetPos(newX, newY)
+}
+
+// LocateOnScreen 创建任意坐标窗口
+func (w *window) LocateOnScreen(setPosX, setPosY int) {
+	w.custom = true
+	w.setPosX = setPosX
+	w.setPosY = setPosY
+	if w.view() != nil {
+		runOnMain(w.doLocateOnScreen)
+	}
+}
+
+func (w *window) doLocateOnScreen() {
+	viewWidth, viewHeight := w.screenSize(w.canvas.size)
+	if w.width > viewWidth { // in case our window has not called back to canvas size yet
+		viewWidth = w.width
+	}
+	if w.height > viewHeight {
+		viewHeight = w.height
+	}
+
+	if w.setPosX < 0 {
+		w.setPosX = 0
+	}
+
+	if w.setPosY < 0 {
+		w.setPosY = 0
+	}
+
+	// get window dimensions in pixels
+	monitor := w.getMonitorForWindow()
+	monMode := monitor.GetVideoMode()
+	fmt.Print(monMode.Width)
+
+	// set new window coordinates
+	w.viewport.SetPos(w.setPosX, w.setPosY)
+}
+
+func (w *window) ScreenInfo() glfw.VidMode {
+	// get window dimensions in pixels
+	monitor := w.getMonitorForWindow()
+	monMode := monitor.GetVideoMode()
+	return glfw.VidMode{
+		Width:       monMode.Width,
+		Height:      monMode.Height,
+		RedBits:     monMode.RedBits,
+		GreenBits:   monMode.GreenBits,
+		BlueBits:    monMode.BlueBits,
+		RefreshRate: monMode.RefreshRate,
+	}
 }
 
 func (w *window) RequestFocus() {
@@ -741,7 +799,8 @@ func (w *window) create() {
 
 		w.requestedWidth, w.requestedHeight = w.width, w.height
 		// order of operation matters so we do these last items in order
-		w.viewport.SetSize(w.shouldWidth, w.shouldHeight) // ensure we requested latest size
+		w.viewport.SetSize(w.shouldWidth, w.shouldHeight) // // ensure we requested latest size
+		//w.doZeroOnScreen()
 	})
 }
 

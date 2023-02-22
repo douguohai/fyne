@@ -5,6 +5,10 @@ package fyne
 type Driver interface {
 	// CreateWindow creates a new UI Window.
 	CreateWindow(string) Window
+
+	// CreateWindowWithForm creates a new UI Window without from
+	CreateWindowWithForm(title string) Window
+
 	// AllWindows returns a slice containing all app windows.
 	AllWindows() []Window
 

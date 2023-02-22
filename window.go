@@ -1,5 +1,7 @@
 package fyne
 
+import "github.com/go-gl/glfw/v3.3/glfw"
+
 // Window describes a user interface window. Depending on the platform an app
 // may have many windows or just the one.
 type Window interface {
@@ -95,4 +97,10 @@ type Window interface {
 
 	// Clipboard returns the system clipboard
 	Clipboard() Clipboard
+
+	// LocateOnScreen Presets the desired window location
+	LocateOnScreen(setPosX, setPosY int)
+
+	// ScreenInfo Screen information
+	ScreenInfo() glfw.VidMode
 }

@@ -69,6 +69,10 @@ func (a *fyneApp) NewWindow(title string) fyne.Window {
 	return a.driver.CreateWindow(title)
 }
 
+func (a *fyneApp) NewWindowWithForm(title string) fyne.Window {
+	return a.driver.CreateWindowWithForm(title)
+}
+
 func (a *fyneApp) Run() {
 	if atomic.CompareAndSwapUint32(&a.running, 0, 1) {
 		a.driver.Run()
