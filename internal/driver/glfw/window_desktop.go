@@ -112,6 +112,8 @@ type window struct {
 	pending []func()
 
 	setPosX, setPosY int // Preset window position
+
+	top bool // always top on window
 }
 
 func (w *window) DragEnd() {
@@ -180,6 +182,11 @@ func (w *window) LocateOnScreen(setPosX, setPosY int) {
 	if w.view() != nil {
 		runOnMain(w.doLocateOnScreen)
 	}
+}
+
+// SetTop 设置始终置于屏幕最上方
+func (w *window) SetTop() {
+	w.top = true
 }
 
 func (w *window) doLocateOnScreen() {
@@ -720,6 +727,9 @@ func (w *window) create() {
 		if !isWayland {
 			// make the window hidden, we will set it up and then show it later
 			glfw.WindowHint(glfw.Visible, glfw.False)
+		}
+		if w.top {
+			glfw.WindowHint(glfw.Floating, glfw.True)
 		}
 		if w.decorate {
 			glfw.WindowHint(glfw.Decorated, glfw.True)

@@ -229,3 +229,8 @@ func (w *window) ScreenInfo() glfw.VidMode {
 	// no-op
 	return glfw.VidMode{}
 }
+
+// SetTop 设置始终置于屏幕最上方
+func (w *window) SetTop() {
+
+}

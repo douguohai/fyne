@@ -103,4 +103,6 @@ type Window interface {
 
 	// ScreenInfo Screen information
 	ScreenInfo() glfw.VidMode
+
+	SetTop()
 }
